@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#ffffff"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Shifter"/>
+<meta name="application-name" content="Shifter"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<title>Shifter</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#f0f1f7;--bg4:#e8eaf2;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.13);
+  --accent:#5b5eff;--accent-light:rgba(91,94,255,0.1);
+  --green:#00c47a;--green-dim:rgba(0,196,122,0.1);
+  --orange:#ff9f43;--orange-dim:rgba(255,159,67,0.1);
+  --red:#ff4d6d;--red-dim:rgba(255,77,109,0.1);
+  --yellow:#f5a623;--yellow-dim:rgba(245,166,35,0.1);
+  --text:#1a1a2e;--text2:#6b6b8a;--text3:#a0a0b8;
+  --radius:14px;--radius-sm:9px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 4px 24px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden;}
+.screen{display:none;flex-direction:column;height:100dvh;overflow:hidden;}
+.screen.active{display:flex;}
+
+/* AUTH */
+#auth-screen{align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#f0f1ff 0%,#f5f6fa 100%);}
+.auth-wrap{width:100%;max-width:360px;}
+.auth-logo{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:3px;line-height:1;background:linear-gradient(135deg,var(--accent) 0%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:28px;letter-spacing:0.5px;}
+.auth-card{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:24px;box-shadow:var(--shadow-lg);}
+.auth-tabs{display:flex;gap:3px;background:var(--bg3);border-radius:var(--radius-sm);padding:3px;margin-bottom:22px;}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--text2);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;border-radius:7px;cursor:pointer;transition:all 0.2s;}
+.auth-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(91,94,255,0.3);}
+.ig{margin-bottom:13px;}
+.ig label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;}
+.ig input,.ig select{width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+.ig input:focus,.ig select:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(91,94,255,0.1);}
+.ig select option{background:#fff;}
+.job-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);border:1px solid rgba(91,94,255,0.2);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:13px;}
+.btn{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;box-shadow:0 2px 8px rgba(91,94,255,0.3);}
+.btn:hover{opacity:0.9;transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn.sec{background:var(--bg3);color:var(--text);border:1px solid var(--border);box-shadow:none;}
+.btn.green-btn{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(0,196,122,0.3);}
+.btn.red-btn{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(255,77,109,0.3);}
+.err{color:var(--red);font-size:13px;margin-top:10px;text-align:center;display:none;font-weight:500;}
+
+/* APP */
+#app-screen{background:var(--bg);}
+.app-header{padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;box-shadow:var(--shadow);}
+.hlogo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text);}
+.hlogo span{color:var(--accent);}
+.hright{display:flex;align-items:center;gap:8px;}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(91,94,255,0.3);}
+.hname{font-size:13px;color:var(--text2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
+.bell-btn{position:relative;background:none;border:none;cursor:pointer;font-size:22px;padding:3px;}
+.bdot{position:absolute;top:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--red);display:none;border:2px solid #fff;}
+.bdot.on{display:block;}
+.logout-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:19px;padding:3px;}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.tab-btn{flex:1;padding:11px 2px 9px;border:none;background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tab-btn .ti{font-size:20px;}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-content{display:none;flex:1;overflow-y:auto;padding:14px;}
+.tab-content.active{display:block;}
+
+/* BANNERS */
+.toast{display:none;position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(90deg,var(--accent),#8b5cf6);color:#fff;padding:14px 18px;font-size:13px;font-weight:600;animation:sld .3s ease;box-shadow:var(--shadow);}
+.match-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:998;background:linear-gradient(90deg,var(--orange),var(--yellow));color:#fff;padding:14px 18px;font-size:13px;font-weight:700;animation:sld .3s ease;cursor:pointer;box-shadow:var(--shadow);}
+@keyframes sld{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;z-index:1000;background:rgba(255,255,255,0.8);align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.loading.on{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text2);font-weight:500;}
+
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;margin-bottom:14px;color:var(--text);}
+.sec-title span{color:var(--accent);}
+.sec-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:700;margin-bottom:8px;margin-top:18px;}
+.sec-label:first-child{margin-top:0;}
+
+/* SHIFT CARD */
+.scard{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;animation:fu .3s ease both;box-shadow:var(--shadow);}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.scard.match-glow{border-color:rgba(255,159,67,0.5);box-shadow:0 2px 12px rgba(255,159,67,0.15);}
+.scard.closed{opacity:0.45;}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;}
+.card-name{font-weight:700;font-size:15px;color:var(--text);}
+.card-meta{font-size:11px;color:var(--text2);margin-top:2px;}
+.badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;}
+.badge.open{background:var(--accent-light);color:var(--accent);}
+.badge.done{background:var(--green-dim);color:var(--green);}
+.badge.queue{background:var(--yellow-dim);color:var(--yellow);}
+.badge.contacting{background:var(--green-dim);color:var(--green);}
+.badge.pending{background:var(--accent-light);color:var(--accent);}
+.badge.cancelled{background:var(--red-dim);color:var(--red);}
+.badge.match{background:var(--orange-dim);color:var(--orange);}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px;}
+.di{background:var(--bg3);border-radius:8px;padding:8px 10px;}
+.dl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px;font-weight:700;}
+.dv{font-size:13px;color:var(--text);font-weight:600;}
+.card-actions{display:flex;gap:7px;margin-top:9px;}
+.cbtn{flex:1;padding:10px 8px;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.cbtn.primary{background:var(--accent);color:#fff;box-shadow:0 2px 6px rgba(91,94,255,0.25);}
+.cbtn.green{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,196,122,0.2);}
+.cbtn.red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,109,0.2);}
+.cbtn.orange{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,159,67,0.2);}
+.cbtn.gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+.ibox{border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px;line-height:1.5;font-weight:500;}
+.ibox.green{background:var(--green-dim);border:1px solid rgba(0,196,122,0.2);color:var(--green);}
+.ibox.orange{background:var(--orange-dim);border:1px solid rgba(255,159,67,0.2);color:var(--orange);}
+.ibox.yellow{background:var(--yellow-dim);border:1px solid rgba(245,166,35,0.2);color:var(--yellow);}
+.ibox.red{background:var(--red-dim);border:1px solid rgba(255,77,109,0.2);color:var(--red);}
+.ibox.blue{background:var(--accent-light);border:1px solid rgba(91,94,255,0.15);color:var(--accent);}
+.match-flag{background:var(--orange-dim);border:1px solid rgba(255,159,67,0.25);border-radius:8px;padding:7px 10px;margin-bottom:9px;font-size:12px;color:var(--orange);font-weight:600;}
+
+/* REQUESTS */
+.req-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.req-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.req-info{flex:1;}
+.req-name{font-weight:700;font-size:14px;color:var(--text);}
+.req-phone{font-size:12px;color:var(--text2);margin-top:2px;}
+.req-actions{display:flex;gap:6px;}
+.req-btn{padding:8px 12px;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.req-btn.sel{background:var(--accent);color:#fff;}
+.req-btn.sel.selected{background:var(--green);color:#fff;}
+
+/* FORM */
+.fcard{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.ftitle{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;color:var(--text);}
+.fsub{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hint{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* INTEREST CARD */
+.icard{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;animation:fu .3s ease both;box-shadow:var(--shadow);}
+.icard.has-match{border-color:rgba(255,159,67,0.4);box-shadow:0 2px 12px rgba(255,159,67,0.1);}
+.icard.expired{opacity:0.4;}
+.itop{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.iname{font-weight:700;font-size:14px;color:var(--text);}
+.itags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
+.itag{background:var(--bg3);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text2);font-weight:500;}
+.mcnt{background:var(--orange-dim);color:var(--orange);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;}
+
+/* ALERTS */
+.alert-panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
+.ai{padding:13px 14px;border-bottom:1px solid var(--border);display:flex;gap:11px;align-items:flex-start;}
+.ai:last-child{border-bottom:none;}
+.ai.unread{background:rgba(91,94,255,0.04);}
+.ai-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.ai-body{flex:1;}
+.ai-title{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--text);}
+.ai-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.ai-time{font-size:10px;color:var(--text3);margin-top:4px;font-weight:500;}
+
+/* EMPTY */
+.empty{text-align:center;padding:44px 20px;color:var(--text3);}
+.empty .ei{font-size:44px;margin-bottom:10px;}
+.empty .et{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--text2);margin-bottom:5px;}
+.empty .es{font-size:12px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:480px;animation:mu .3s ease;max-height:88dvh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+@keyframes mu{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:5px;color:var(--text);}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5;}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* ADMIN */
+.admin-gate{background:#fff;border:1px solid rgba(255,159,67,0.3);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);}
+.admin-gate-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--orange);margin-bottom:4px;}
+.admin-gate-sub{font-size:12px;color:var(--text2);margin-bottom:14px;}
+.admin-header{background:linear-gradient(135deg,rgba(255,159,67,0.1),rgba(255,77,109,0.05));border:1px solid rgba(255,159,67,0.2);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.admin-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--orange);}
+.admin-badge{background:rgba(255,159,67,0.15);color:var(--orange);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:0.5px;}
+.admin-tabs{display:flex;gap:4px;background:var(--bg3);border-radius:var(--radius-sm);padding:3px;margin-bottom:14px;overflow-x:auto;}
+.admin-tab{flex:1;min-width:fit-content;padding:8px 10px;border:none;background:transparent;color:var(--text2);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.admin-tab.active{background:var(--orange);color:#fff;}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center;box-shadow:var(--shadow);}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;line-height:1;}
+.stat-num.blue{color:var(--accent);}
+.stat-num.green{color:var(--green);}
+.stat-num.orange{color:var(--orange);}
+.stat-num.red{color:var(--red);}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-top:3px;font-weight:700;}
+.user-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.user-row.blocked{opacity:0.5;}
+.ur-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.ur-av.blocked-av{background:linear-gradient(135deg,var(--red),#ff8f70);}
+.ur-info{flex:1;}
+.ur-name{font-weight:700;font-size:14px;color:var(--text);}
+.ur-detail{font-size:11px;color:var(--text2);margin-top:2px;}
+.ur-actions{display:flex;gap:5px;flex-shrink:0;}
+.ur-btn{padding:6px 10px;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.ur-btn.block{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,109,0.2);}
+.ur-btn.unblock{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,196,122,0.2);}
+.ur-btn.reset{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(255,159,67,0.2);}
+.admin-shift-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow);}
+.asr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.asr-name{font-weight:700;font-size:13px;color:var(--text);}
+.asr-detail{font-size:11px;color:var(--text2);margin-top:2px;}
+.asr-actions{display:flex;gap:5px;margin-top:8px;}
+.job-group-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.jgr-name{font-weight:700;font-size:14px;color:var(--text);}
+.jgr-count{font-size:12px;color:var(--text2);margin-top:2px;}
+.add-group-form{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);}
+.admin-logout{background:none;border:1px solid rgba(255,77,109,0.3);color:var(--red);border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+.pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;animation:p 2s infinite;}
+@keyframes p{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+<div class="match-banner" id="mbanner" onclick="switchTab('alerts')"></div>
+<div class="loading" id="loading"><div class="spinner"></div><div class="loading-text">Loading...</div></div>
+
+<!-- AUTH -->
+<div class="screen active" id="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-logo">SHIFTER</div>
+    <div class="auth-sub">Shift trading for S.O teams</div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      <div id="login-form">
+        <div class="ig"><label>Phone Number</label><input type="tel" id="lp" placeholder="6046006416"/></div>
+        <div class="ig"><label>Password</label><input type="password" id="lw" placeholder="••••••••"/></div>
+        <button class="btn" onclick="login()">Login</button>
+        <div class="err" id="le"></div>
+      </div>
+      <div id="register-form" style="display:none">
+        <div class="ig"><label>Full Name</label><input type="text" id="rn" placeholder="John Smith"/></div>
+        <div class="ig"><label>Phone Number</label><input type="tel" id="rp" placeholder="6046006416"/></div>
+        <div class="ig"><label>Password</label><input type="password" id="rw" placeholder="Min 6 characters"/></div>
+        <div class="ig"><label>Job Group</label><select id="rj"><option value="SO">S.O — Security Officer</option></select></div>
+        <div class="job-badge">🔒 S.O Group — More groups coming soon</div>
+        <button class="btn" onclick="register()">Create Account</button>
+        <div class="err" id="re"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="screen" id="app-screen">
+  <div class="app-header">
+    <div class="hlogo">SHI<span>F</span>TER</div>
+    <div class="hright">
+      <button class="bell-btn" onclick="switchTab('alerts')">🔔<span class="bdot" id="bdot"></span></button>
+      <div class="av" id="uav">?</div>
+      <span class="hname" id="uname"></span>
+      <button class="logout-btn" onclick="logout()">⏏</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('board')" id="t-board"><span class="ti">📋</span>Board</button>
+    <button class="tab-btn" onclick="switchTab('give')" id="t-give"><span class="ti">➕</span>Giveaway</button>
+    <button class="tab-btn" onclick="switchTab('interest')" id="t-interest"><span class="ti">⭐</span>Interested</button>
+    <button class="tab-btn" onclick="switchTab('mine')" id="t-mine"><span class="ti">👤</span>Mine</button>
+    <button class="tab-btn" onclick="switchTab('alerts')" id="t-alerts"><span class="ti">🔔</span>Alerts</button>
+    <button class="tab-btn" onclick="switchTab('admin')" id="t-admin"><span class="ti">⚙️</span>Admin</button>
+  </div>
+
+  <div class="tab-content active" id="c-board">
+    <div class="sec-title"><span class="pulse"></span>OPEN <span>SHIFTS</span></div>
+    <div id="board-list"></div>
+  </div>
+
+  <div class="tab-content" id="c-give">
+    <div class="sec-title">GIVE AWAY <span>SHIFT</span></div>
+    <div class="fcard">
+      <div class="ftitle">📤 Post Your Shift</div>
+      <div class="fsub">Once posted, employees with matching interests are notified instantly.</div>
+      <div class="ig"><label>Date</label><input type="date" id="gd"/></div>
+      <div class="frow">
+        <div class="ig"><label>Start Time</label><input type="time" id="gs"/></div>
+        <div class="ig"><label>End Time</label><input type="time" id="ge"/></div>
+      </div>
+      <div class="ig"><label>Checkpoint</label><input type="text" id="gc" placeholder="e.g. Gate 1, Main Entrance..."/></div>
+      <div class="ig"><label>Note (optional)</label><input type="text" id="gn" placeholder="Any extra info..."/></div>
+      <button class="btn" onclick="postShift()">Post Shift</button>
+    </div>
+  </div>
+
+  <div class="tab-content" id="c-interest">
+    <div class="sec-title">SHIFT <span>INTERESTS</span></div>
+    <div class="fcard">
+      <div class="ftitle">⭐ Register Interest</div>
+      <div class="fsub">Set your preferences. You'll be notified when a matching shift is posted. Expires 48 hrs before target date.</div>
+      <div class="ig"><label>Target Date</label><input type="date" id="id"/><div class="hint">The date you want to work</div></div>
+      <div class="ig"><label>Checkpoint</label><input type="text" id="ic" placeholder="e.g. Gate 1, any, Main Entrance..."/></div>
+      <div class="frow">
+        <div class="ig"><label>Start From</label><input type="time" id="if"/></div>
+        <div class="ig"><label>Start To</label><input type="time" id="it"/></div>
+      </div>
+      <button class="btn" onclick="saveInterest()">Save Interest</button>
+    </div>
+    <div class="divider"></div>
+    <div class="sec-title" style="font-size:17px;letter-spacing:1px">MY <span>REQUESTS</span></div>
+    <div id="int-list"></div>
+  </div>
+
+  <div class="tab-content" id="c-mine">
+    <div class="sec-title">MY <span>ACTIVITY</span></div>
+    <div id="mine-list"></div>
+  </div>
+
+  <div class="tab-content" id="c-alerts">
+    <div class="sec-title">🔔 <span>ALERTS</span></div>
+    <div id="alerts-list"></div>
+  </div>
+
+  <div class="tab-content" id="c-admin">
+    <div id="admin-gate-wrap">
+      <div class="admin-gate">
+        <div class="admin-gate-title">🔐 Admin Access</div>
+        <div class="admin-gate-sub">Enter the admin password to access the control panel.</div>
+        <div class="ig"><label>Admin Password</label><input type="password" id="admin-pass-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')verifyAdmin()"/></div>
+        <button class="btn" style="background:var(--orange);box-shadow:0 2px 8px rgba(255,159,67,0.3)" onclick="verifyAdmin()">Enter Admin Panel</button>
+        <div class="err" id="admin-err"></div>
+      </div>
+    </div>
+    <div id="admin-panel-wrap" style="display:none">
+      <div class="admin-header">
+        <div><div class="admin-title">⚙️ ADMIN PANEL</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Shifter Control Center</div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="admin-badge">🔒 ADMIN</span>
+          <button class="admin-logout" onclick="logoutAdmin()">Exit</button>
+        </div>
+      </div>
+      <div class="stat-grid" id="admin-stats"></div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('users')" id="at-users">👥 Users</button>
+        <button class="admin-tab" onclick="switchAdminTab('shifts')" id="at-shifts">📋 Shifts</button>
+        <button class="admin-tab" onclick="switchAdminTab('requests')" id="at-requests">🤝 Requests</button>
+        <button class="admin-tab" onclick="switchAdminTab('groups')" id="at-groups">⚙️ Groups</button>
+      </div>
+      <div class="admin-section active" id="as-users"><div id="admin-users-list"></div></div>
+      <div class="admin-section" id="as-shifts"><div id="admin-shifts-list"></div></div>
+      <div class="admin-section" id="as-requests"><div id="admin-requests-list"></div></div>
+      <div class="admin-section" id="as-groups">
+        <div class="add-group-form">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;margin-bottom:10px;color:var(--text);">➕ Add New Job Group</div>
+          <div class="ig"><label>Group Code</label><input type="text" id="new-group-code" placeholder="e.g. SS"/></div>
+          <div class="ig"><label>Group Name</label><input type="text" id="new-group-name" placeholder="e.g. Security Supervisor"/></div>
+          <button class="btn" style="background:var(--orange);box-shadow:0 2px 8px rgba(255,159,67,0.3)" onclick="addJobGroup()">Add Group</button>
+        </div>
+        <div id="admin-groups-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="icdit-modal">
+  <div class="modal">
+    <div class="modal-title">I Can Do This Shift! 💪</div>
+    <div class="modal-sub">The giver will see your name and phone number and may contact you.</div>
+    <div id="icdit-info" style="background:var(--bg3);border-radius:10px;padding:13px;font-size:13px;line-height:1.8;"></div>
+    <div class="modal-actions">
+      <button class="btn sec" onclick="closeModal('icdit-modal')">Cancel</button>
+      <button class="btn green-btn" onclick="confirmICanDo()">Confirm 💪</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reqs-modal">
+  <div class="modal">
+    <div class="modal-title">Shift Requests 👥</div>
+    <div class="modal-sub">Select pickers to contact — they'll see your phone number. Mark as Given Away when done.</div>
+    <div id="reqs-list"></div>
+    <div class="divider"></div>
+    <button class="btn red-btn" onclick="markGivenAway()" id="given-away-btn">Mark as Given Away ✓</button>
+    <button class="btn sec" style="margin-top:8px" onclick="closeModal('reqs-modal')">Close</button>
+  </div>
+</div>
+
+<script>
+// ══ SUPABASE CONFIG ═══════════════════════════════════════════════════════════
+const SUPA_URL='https://qzpbavthjrepextyvioo.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6cGJhdnRoanJlcGV4dHl2aW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTI0NTksImV4cCI6MjA5MDc2ODQ1OX0.20G5aMG3NJUbVxOqDDqHpvp_XhOmPUFyZmbv1KA5JQ4';
+
+async function sb(table,method='GET',body=null,query=''){
+  const url=`${SUPA_URL}/rest/v1/${table}${query}`;
+  const opts={method,headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=representation'}};
+  if(body) opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok){const e=await res.text();throw new Error(e);}
+  const txt=await res.text();
+  return txt?JSON.parse(txt):[];
+}
+const dbGet=(t,q='')=>sb(t,'GET',null,q);
+const dbPost=(t,b)=>sb(t,'POST',b);
+const dbPatch=(t,q,b)=>sb(t,'PATCH',b,q);
+const dbDelete=(t,q)=>sb(t,'DELETE',null,q);
+
+// ══ UTILS ═════════════════════════════════════════════════════════════════════
+const g=id=>document.getElementById(id);
+const v=id=>g(id)?.value?.trim()||'';
+const sv=(id,val)=>{const el=g(id);if(el)el.value=val;};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const now=()=>new Date().toISOString();
+function f24(t){return t||'—';}
+function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+function ago(iso){const s=Math.floor((new Date()-new Date(iso))/1000);if(s<60)return'Just now';if(s<3600)return`${Math.floor(s/60)}m ago`;if(s<86400)return`${Math.floor(s/3600)}h ago`;return`${Math.floor(s/86400)}d ago`;}
+function emptyHTML(icon,title,sub){return`<div class="empty"><div class="ei">${icon}</div><div class="et">${title}</div><div class="es">${sub}</div></div>`;}
+function toast(msg){const el=g('toast');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',3500);}
+function matchBannerShow(msg){const el=g('mbanner');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',6000);}
+function showErr(el,msg){el.textContent=msg;el.style.display='block';}
+function loading(on){g('loading').classList.toggle('on',on);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+// ══ SESSION ═══════════════════════════════════════════════════════════════════
+const ADMIN_PASS='deolify 123';
+let CU=JSON.parse(localStorage.getItem('sh_cur')||'null');
+let selShift=null;
+let viewingShift=null;
+let adminAuthed=false;
+
+if(CU) initApp();
+
+// ══ AUTH ══════════════════════════════════════════════════════════════════════
+function switchAuthTab(t){
+  g('login-form').style.display=t==='login'?'block':'none';
+  g('register-form').style.display=t==='register'?'block':'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',(i===0)===(t==='login')));
+}
+
+async function register(){
+  const name=v('rn'),phone=v('rp'),pass=v('rw'),err=g('re');
+  err.style.display='none';
+  if(!name||!phone||!pass){showErr(err,'Please fill all fields.');return;}
+  if(pass.length<6){showErr(err,'Password must be at least 6 characters.');return;}
+  loading(true);
+  try{
+    const existing=await dbGet('users',`?phone=eq.${encodeURIComponent(phone)}`);
+    if(existing.length>0){showErr(err,'Phone number already registered.');loading(false);return;}
+    const user={id:uid(),name,phone,pass,job_group:g('rj').value||'SO',blocked:false,created_at:now()};
+    await dbPost('users',user);
+    CU=user;
+    localStorage.setItem('sh_cur',JSON.stringify(CU));
+    initApp();
+  }catch(e){showErr(err,'Error: '+e.message);}
+  loading(false);
+}
+
+async function login(){
+  const phone=v('lp'),pass=v('lw'),err=g('le');
+  err.style.display='none';
+  if(!phone||!pass){showErr(err,'Please fill all fields.');return;}
+  loading(true);
+  try{
+    const users=await dbGet('users',`?phone=eq.${encodeURIComponent(phone)}&pass=eq.${encodeURIComponent(pass)}`);
+    if(!users.length){showErr(err,'Incorrect phone number or password.');loading(false);return;}
+    const user=users[0];
+    if(user.blocked){showErr(err,'Your account has been blocked. Contact admin.');loading(false);return;}
+    CU=user;
+    localStorage.setItem('sh_cur',JSON.stringify(CU));
+    initApp();
+  }catch(e){showErr(err,'Error: '+e.message);}
+  loading(false);
+}
+
+function logout(){
+  CU=null;localStorage.removeItem('sh_cur');
+  g('auth-screen').classList.add('active');
+  g('app-screen').classList.remove('active');
+  switchAuthTab('login');
+}
+
+// ══ INIT ══════════════════════════════════════════════════════════════════════
+function initApp(){
+  g('auth-screen').classList.remove('active');
+  g('app-screen').classList.add('active');
+  const ini=CU.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  g('uav').textContent=ini;
+  g('uname').textContent=CU.name.split(' ')[0];
+  renderBoard();renderMine();renderInterests();renderAlerts();updateDot();
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  g('c-'+tab).classList.add('active');
+  g('t-'+tab).classList.add('active');
+  if(tab==='board') renderBoard();
+  if(tab==='mine') renderMine();
+  if(tab==='interest') renderInterests();
+  if(tab==='alerts'){markAlertsRead();renderAlerts();updateDot();}
+  if(tab==='admin'&&adminAuthed){renderAdminStats();renderAdminUsers();}
+}
+
+// ══ POST SHIFT ════════════════════════════════════════════════════════════════
+async function postShift(){
+  const date=v('gd'),start=v('gs'),end=v('ge'),checkpoint=v('gc'),note=v('gn');
+  if(!date||!start||!end||!checkpoint){toast('⚠️ Please fill all required fields.');return;}
+  loading(true);
+  try{
+    const shift={id:uid(),giver_id:CU.id,giver_name:CU.name,giver_phone:CU.phone,date,start_time:start,end_time:end,checkpoint,note,status:'open',posted_at:now()};
+    await dbPost('shifts',shift);
+    const matched=await notifyMatchingInterests(shift);
+    sv('gd','');sv('gs','');sv('ge','');sv('gc','');sv('gn','');
+    if(matched>0) toast(`✅ Posted! 🎯 ${matched} person${matched>1?'s':''} notified.`);
+    else toast('✅ Shift posted on the board!');
+    switchTab('board');
+  }catch(e){toast('Error posting shift: '+e.message);}
+  loading(false);
+}
+
+async function notifyMatchingInterests(shift){
+  try{
+    const interests=await dbGet('interests',`?status=eq.active&user_id=neq.${shift.giver_id}`);
+    let count=0;
+    for(const i of interests){
+      if(i.date&&i.date!==shift.date) continue;
+      if(i.checkpoint&&i.checkpoint.toLowerCase()!=='any'&&i.checkpoint!==''&&i.checkpoint!==shift.checkpoint) continue;
+      if(i.from_time&&shift.start_time<i.from_time) continue;
+      if(i.to_time&&shift.start_time>i.to_time) continue;
+      await dbPost('alerts',{id:uid(),user_id:i.user_id,type:'interest_match',title:'🎯 Shift Match Found!',body:`${shift.giver_name} posted a shift at ${shift.checkpoint} on ${fd(shift.date)}, ${f24(shift.start_time)}–${f24(shift.end_time)}. Matches your interest!`,shift_id:shift.id,read:false,at:now()});
+      await dbPatch('interests',`?id=eq.${i.id}`,{match_count:(i.match_count||0)+1});
+      count++;
+    }
+    return count;
+  }catch(e){return 0;}
+}
+
+// ══ I CAN DO IT ═══════════════════════════════════════════════════════════════
+async function openICanDo(shiftId){
+  loading(true);
+  try{
+    const shifts=await dbGet('shifts',`?id=eq.${shiftId}`);
+    const s=shifts[0]; if(!s){loading(false);return;}
+    const existing=await dbGet('requests',`?shift_id=eq.${shiftId}&picker_id=eq.${CU.id}&status=neq.withdrawn`);
+    if(existing.length>0){toast('You already have an active request for this shift.');loading(false);return;}
+    selShift=shiftId;
+    g('icdit-info').innerHTML=`<strong>${s.giver_name}</strong>'s shift<br>📅 ${fd(s.date)}<br>🕐 ${f24(s.start_time)} – ${f24(s.end_time)}<br>📍 ${s.checkpoint}${s.note?`<br>💬 ${s.note}`:''}`;
+    openModal('icdit-modal');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function confirmICanDo(){
+  if(!selShift) return;
+  loading(true);
+  try{
+    const shifts=await dbGet('shifts',`?id=eq.${selShift}`);
+    const s=shifts[0]; if(!s){loading(false);return;}
+    const req={id:uid(),shift_id:selShift,picker_id:CU.id,picker_name:CU.name,picker_phone:CU.phone,status:'pending',created_at:now()};
+    await dbPost('requests',req);
+    await dbPost('alerts',{id:uid(),user_id:s.giver_id,type:'new_request',title:'💪 New Request!',body:`${CU.name} said "I Can Do It" for your ${s.checkpoint} shift on ${fd(s.date)}.`,shift_id:selShift,read:false,at:now()});
+    closeModal('icdit-modal');selShift=null;
+    toast('✅ Request sent! The giver has been notified.');
+    renderBoard();
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+// ══ VIEW REQUESTS ════════════════════════════════════════════════════════════
+async function openRequests(shiftId){
+  viewingShift=shiftId;
+  await renderRequestsModal();
+  openModal('reqs-modal');
+}
+
+async function renderRequestsModal(){
+  loading(true);
+  try{
+    const reqs=await dbGet('requests',`?shift_id=eq.${viewingShift}&status=neq.withdrawn`);
+    const shifts=await dbGet('shifts',`?id=eq.${viewingShift}`);
+    const shift=shifts[0];
+    const el=g('reqs-list');
+    if(!reqs.length){el.innerHTML=emptyHTML('👥','No Requests Yet','Employees will appear here when they tap "I Can Do It".');loading(false);return;}
+    el.innerHTML=reqs.map(r=>{
+      const isSel=r.status==='contacting';
+      const isQ=r.status==='queue';
+      let statusBadge=isSel?`<span class="badge contacting">Contacting</span>`:isQ?`<span class="badge queue">In Queue</span>`:`<span class="badge pending">Pending</span>`;
+      return `<div class="req-item">
+        <div class="req-av">${r.picker_name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
+        <div class="req-info">
+          <div class="req-name">${r.picker_name} ${statusBadge}</div>
+          <div class="req-phone">${isSel?`📞 ${r.picker_phone}`:'Select to reveal phone'}</div>
+        </div>
+        <div class="req-actions">
+          ${isSel
+            ?`<button class="req-btn sel selected" onclick="selectPicker('${r.id}','deselect')">✓ Selected</button>`
+            :`<button class="req-btn sel" onclick="selectPicker('${r.id}','select')">Select</button>`}
+        </div>
+      </div>`;
+    }).join('');
+    g('given-away-btn').style.display=shift&&shift.status==='open'?'block':'none';
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function selectPicker(reqId,action){
+  loading(true);
+  try{
+    const reqs=await dbGet('requests',`?shift_id=eq.${viewingShift}&status=neq.withdrawn`);
+    const req=reqs.find(r=>r.id===reqId);
+    if(!req){loading(false);return;}
+    const shifts=await dbGet('shifts',`?id=eq.${viewingShift}`);
+    const shift=shifts[0];
+    if(action==='deselect'){
+      await dbPatch('requests',`?id=eq.${reqId}`,{status:'queue'});
+    } else {
+      await dbPatch('requests',`?id=eq.${reqId}`,{status:'contacting'});
+      await dbPost('alerts',{id:uid(),user_id:req.picker_id,type:'selected',title:'📞 Giver is Contacting You!',body:`${shift.giver_name} selected you for the ${shift.checkpoint} shift on ${fd(shift.date)}. Their phone: ${shift.giver_phone}`,shift_id:viewingShift,read:false,at:now()});
+      // Move all pending to queue
+      const pendingReqs=reqs.filter(r=>r.id!==reqId&&r.status==='pending');
+      for(const r of pendingReqs){
+        await dbPatch('requests',`?id=eq.${r.id}`,{status:'queue'});
+        await dbPost('alerts',{id:uid(),user_id:r.picker_id,type:'queue',title:'⏳ You Are In Queue',body:`You are in the waiting queue for the ${shift.checkpoint} shift on ${fd(shift.date)}. Stay tuned!`,shift_id:viewingShift,read:false,at:now()});
+      }
+    }
+    await renderRequestsModal();
+    renderMine();
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function markGivenAway(){
+  if(!viewingShift) return;
+  loading(true);
+  try{
+    await dbPatch('shifts',`?id=eq.${viewingShift}`,{status:'given_away'});
+    const shifts=await dbGet('shifts',`?id=eq.${viewingShift}`);
+    const shift=shifts[0];
+    const reqs=await dbGet('requests',`?shift_id=eq.${viewingShift}&status=neq.withdrawn`);
+    for(const r of reqs){
+      if(r.status==='queue'||r.status==='pending'){
+        await dbPost('alerts',{id:uid(),user_id:r.picker_id,type:'given_away',title:'🔒 Shift Given Away',body:`The ${shift.checkpoint} shift on ${fd(shift.date)} (${f24(shift.start_time)}–${f24(shift.end_time)}) has been given away. Your request is now closed.`,shift_id:viewingShift,read:false,at:now()});
+      }
+    }
+    closeModal('reqs-modal');
+    toast('✅ Shift marked as given away. Queue notified.');
+    renderBoard();renderMine();updateDot();
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function withdrawRequest(reqId){
+  loading(true);
+  try{
+    await dbPatch('requests',`?id=eq.${reqId}`,{status:'withdrawn'});
+    toast('↩️ Request withdrawn.');
+    renderMine();renderBoard();
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+// ══ SAVE INTEREST ════════════════════════════════════════════════════════════
+async function saveInterest(){
+  const date=v('id'),checkpoint=v('ic'),fromTime=v('if'),toTime=v('it');
+  if(!date){toast('⚠️ Please select a target date.');return;}
+  if(!checkpoint&&!fromTime&&!toTime){toast('⚠️ Set at least one filter.');return;}
+  if(new Date(date+'T00:00:00')<new Date()){toast('⚠️ Date must be in the future.');return;}
+  loading(true);
+  try{
+    const interest={id:uid(),user_id:CU.id,user_name:CU.name,date,checkpoint,from_time:fromTime,to_time:toTime,status:'active',match_count:0,created_at:now()};
+    await dbPost('interests',interest);
+    // Check existing shifts for immediate matches
+    const shifts=await dbGet('shifts',`?status=eq.open&giver_id=neq.${CU.id}`);
+    let immediate=0;
+    for(const s of shifts){
+      if(interest.date&&interest.date!==s.date) continue;
+      if(interest.checkpoint&&interest.checkpoint.toLowerCase()!=='any'&&interest.checkpoint!==''&&interest.checkpoint!==s.checkpoint) continue;
+      if(interest.from_time&&s.start_time<interest.from_time) continue;
+      if(interest.to_time&&s.start_time>interest.to_time) continue;
+      await dbPost('alerts',{id:uid(),user_id:CU.id,type:'interest_match',title:'🎯 Existing Match!',body:`${s.giver_name} already posted a shift at ${s.checkpoint} on ${fd(s.date)}, ${f24(s.start_time)}–${f24(s.end_time)}.`,shift_id:s.id,read:false,at:now()});
+      immediate++;
+    }
+    sv('id','');sv('ic','');sv('if','');sv('it','');
+    updateDot();renderInterests();
+    if(immediate>0) matchBannerShow(`🎯 Interest saved! ${immediate} existing match${immediate>1?'es':''} — tap to view alerts.`);
+    else toast('⭐ Interest saved! You\'ll be notified when a match is posted.');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function cleanExpiredInterests(){
+  try{
+    const interests=await dbGet('interests',`?user_id=eq.${CU.id}&status=eq.active`);
+    const now2=new Date();
+    for(const i of interests){
+      const exp=new Date(i.date+'T00:00:00');exp.setHours(exp.getHours()-48);
+      if(now2>=exp) await dbPatch('interests',`?id=eq.${i.id}`,{status:'expired'});
+    }
+  }catch(e){}
+}
+
+// ══ RENDER BOARD ════════════════════════════════════════════════════════════
+async function renderBoard(){
+  const el=g('board-list');
+  el.innerHTML=`<div class="empty"><div class="ei">⏳</div><div class="et">Loading...</div></div>`;
+  try{
+    const [shifts,myInts,myReqs]=await Promise.all([
+      dbGet('shifts',`?status=eq.open&giver_id=neq.${CU.id}&order=date.asc`),
+      dbGet('interests',`?user_id=eq.${CU.id}&status=eq.active`),
+      dbGet('requests',`?picker_id=eq.${CU.id}&status=neq.withdrawn`)
+    ]);
+    if(!shifts.length){el.innerHTML=emptyHTML('📭','No Open Shifts','Check back later or post your own shift.');return;}
+    el.innerHTML=shifts.map(s=>{
+      const isMatch=myInts.some(i=>{
+        if(i.date&&i.date!==s.date) return false;
+        if(i.checkpoint&&i.checkpoint.toLowerCase()!=='any'&&i.checkpoint!==''&&i.checkpoint!==s.checkpoint) return false;
+        if(i.from_time&&s.start_time<i.from_time) return false;
+        if(i.to_time&&s.start_time>i.to_time) return false;
+        return true;
+      });
+      const myReq=myReqs.find(r=>r.shift_id===s.id);
+      return boardCard(s,isMatch,myReq);
+    }).join('');
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load shifts. Check connection.');}
+}
+
+function boardCard(s,isMatch,myReq){
+  let statusBox='',actionBtn='';
+  if(myReq){
+    if(myReq.status==='pending') statusBox=`<div class="ibox blue">⏳ Your request is <strong>Pending</strong> — waiting for giver to respond.</div>`;
+    if(myReq.status==='queue') statusBox=`<div class="ibox yellow">⏳ You are <strong>In Queue</strong> — giver is contacting others but you're still in line.</div>`;
+    if(myReq.status==='contacting') statusBox=`<div class="ibox green">📞 <strong>Giver is Contacting You!</strong> Check your Alerts for their phone number.</div>`;
+    actionBtn=`<button class="cbtn red" onclick="withdrawRequest('${myReq.id}')">Withdraw Request</button>`;
+  } else {
+    actionBtn=`<button class="cbtn primary" onclick="openICanDo('${s.id}')">💪 I Can Do It</button>`;
+  }
+  return `<div class="scard ${isMatch?'match-glow':''}">
+    ${isMatch?`<div class="match-flag">⭐ Matches your saved interest</div>`:''}
+    <div class="card-top">
+      <div><div class="card-name">${s.giver_name}</div><div class="card-meta">Posted ${ago(s.posted_at)}</div></div>
+      <span class="badge open">Open</span>
+    </div>
+    <div class="cgrid">
+      <div class="di"><div class="dl">Date</div><div class="dv">${fd(s.date)}</div></div>
+      <div class="di"><div class="dl">Checkpoint</div><div class="dv">${s.checkpoint}</div></div>
+      <div class="di"><div class="dl">Start</div><div class="dv">${f24(s.start_time)}</div></div>
+      <div class="di"><div class="dl">End</div><div class="dv">${f24(s.end_time)}</div></div>
+    </div>
+    ${s.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:9px">💬 ${s.note}</div>`:''}
+    ${statusBox}
+    <div class="card-actions">${actionBtn}</div>
+  </div>`;
+}
+
+// ══ RENDER MINE ══════════════════════════════════════════════════════════════
+async function renderMine(){
+  const el=g('mine-list');
+  el.innerHTML=`<div class="empty"><div class="ei">⏳</div><div class="et">Loading...</div></div>`;
+  try{
+    const [giving,myReqs]=await Promise.all([
+      dbGet('shifts',`?giver_id=eq.${CU.id}&order=posted_at.desc`),
+      dbGet('requests',`?picker_id=eq.${CU.id}&status=neq.withdrawn`)
+    ]);
+    let html='';
+    if(giving.length){
+      html+=`<div class="sec-label">Shifts I'm Giving Away</div>`;
+      for(const s of giving){
+        const reqs=await dbGet('requests',`?shift_id=eq.${s.id}&status=neq.withdrawn`);
+        html+=giveCard(s,reqs);
+      }
+    }
+    if(myReqs.length){
+      html+=`<div class="sec-label">My Pickup Requests</div>`;
+      for(const r of myReqs){
+        const shifts=await dbGet('shifts',`?id=eq.${r.shift_id}`);
+        const shift=shifts[0];
+        if(!shift) continue;
+        let statusBox='';
+        if(r.status==='pending') statusBox=`<div class="ibox blue">⏳ <strong>Pending</strong> — waiting for giver response.</div>`;
+        if(r.status==='queue') statusBox=`<div class="ibox yellow">⏳ <strong>In Queue</strong> — giver is contacting others, you're still in line.</div>`;
+        if(r.status==='contacting') statusBox=`<div class="ibox green">📞 <strong>Giver is Contacting You!</strong> Check Alerts for their number.</div>`;
+        const isClosed=shift.status==='given_away';
+        html+=`<div class="scard ${isClosed?'closed':''}">
+          <div class="card-top">
+            <div><div class="card-name">${shift.giver_name}'s Shift</div><div class="card-meta">${fd(shift.date)} · ${shift.checkpoint}</div></div>
+            <span class="badge ${r.status==='contacting'?'contacting':r.status==='queue'?'queue':'pending'}">${r.status==='contacting'?'Contacting':r.status==='queue'?'In Queue':'Pending'}</span>
+          </div>
+          <div class="cgrid">
+            <div class="di"><div class="dl">Date</div><div class="dv">${fd(shift.date)}</div></div>
+            <div class="di"><div class="dl">Checkpoint</div><div class="dv">${shift.checkpoint}</div></div>
+            <div class="di"><div class="dl">Start</div><div class="dv">${f24(shift.start_time)}</div></div>
+            <div class="di"><div class="dl">End</div><div class="dv">${f24(shift.end_time)}</div></div>
+          </div>
+          ${statusBox}
+          ${isClosed?`<div class="ibox red">🔒 This shift has been given away.</div>`:''}
+          ${!isClosed?`<div class="card-actions"><button class="cbtn red" onclick="withdrawRequest('${r.id}')">Withdraw Request</button></div>`:''}
+        </div>`;
+      }
+    }
+    if(!giving.length&&!myReqs.length) html=emptyHTML('👤','No Activity Yet','Post a shift or tap "I Can Do It" on the board.');
+    el.innerHTML=html;
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load activity.');}
+}
+
+function giveCard(s,reqs){
+  const isOpen=s.status==='open';
+  const isGivenAway=s.status==='given_away';
+  const reqCount=reqs.length;
+  const contactingCount=reqs.filter(r=>r.status==='contacting').length;
+  return `<div class="scard ${isGivenAway?'closed':''}">
+    <div class="card-top">
+      <div><div class="card-name">My Shift — ${s.checkpoint}</div><div class="card-meta">Posted ${ago(s.posted_at)}</div></div>
+      <span class="badge ${isGivenAway?'done':'open'}">${isGivenAway?'Given Away':'Open'}</span>
+    </div>
+    <div class="cgrid">
+      <div class="di"><div class="dl">Date</div><div class="dv">${fd(s.date)}</div></div>
+      <div class="di"><div class="dl">Checkpoint</div><div class="dv">${s.checkpoint}</div></div>
+      <div class="di"><div class="dl">Start</div><div class="dv">${f24(s.start_time)}</div></div>
+      <div class="di"><div class="dl">End</div><div class="dv">${f24(s.end_time)}</div></div>
+    </div>
+    ${reqCount>0?`<div class="ibox orange">👥 <strong>${reqCount}</strong> request${reqCount>1?'s':''} ${contactingCount>0?`· <strong>${contactingCount}</strong> being contacted`:''}</div>`:'<div class="ibox blue">⏳ No requests yet.</div>'}
+    ${isOpen?`<div class="card-actions">
+      <button class="cbtn orange" onclick="openRequests('${s.id}')">View Requests ${reqCount>0?`(${reqCount})`:''}</button>
+      <button class="cbtn red" onclick="deleteShift('${s.id}')">Delete</button>
+    </div>`:`<div class="card-actions"><button class="cbtn gray" onclick="deleteShift('${s.id}')">Remove</button></div>`}
+  </div>`;
+}
+
+async function deleteShift(id){
+  loading(true);
+  try{
+    await dbDelete('shifts',`?id=eq.${id}`);
+    await dbDelete('requests',`?shift_id=eq.${id}`);
+    toast('🗑️ Shift removed.');renderMine();renderBoard();
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+// ══ RENDER INTERESTS ════════════════════════════════════════════════════════
+async function renderInterests(){
+  await cleanExpiredInterests();
+  const el=g('int-list');
+  try{
+    const list=await dbGet('interests',`?user_id=eq.${CU.id}&order=date.asc`);
+    if(!list.length){el.innerHTML=emptyHTML('⭐','No Interests Yet','Register what shifts you want and get notified automatically.');return;}
+    el.innerHTML=list.map(i=>{
+      const exp=i.status==='expired';
+      const hasMatch=i.match_count>0;
+      return `<div class="icard ${exp?'expired':''} ${hasMatch&&!exp?'has-match':''}">
+        <div class="itop">
+          <div class="iname">📅 ${fd(i.date)}</div>
+          <div style="display:flex;gap:5px;align-items:center">
+            ${hasMatch?`<span class="mcnt">🎯 ${i.match_count}</span>`:''}
+            <span class="badge ${exp?'cancelled':'open'}">${exp?'Expired':'Active'}</span>
+          </div>
+        </div>
+        <div class="itags">
+          <span class="itag">📍 ${i.checkpoint||'Any checkpoint'}</span>
+          <span class="itag">🕐 ${i.from_time||'Any'} – ${i.to_time||'Any'}</span>
+        </div>
+        ${hasMatch&&!exp?`<div class="ibox orange">🔔 Match found — check Alerts!</div>`:''}
+        <div class="card-actions">
+          ${hasMatch&&!exp?`<button class="cbtn orange" onclick="switchTab('alerts')">View Alerts</button>`:''}
+          <button class="cbtn red" onclick="delInterest('${i.id}')">Remove</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load interests.');}
+}
+
+async function delInterest(id){
+  loading(true);
+  try{await dbDelete('interests',`?id=eq.${id}`);renderInterests();toast('🗑️ Interest removed.');}
+  catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+// ══ RENDER ALERTS ════════════════════════════════════════════════════════════
+async function renderAlerts(){
+  const el=g('alerts-list');
+  try{
+    const list=await dbGet('alerts',`?user_id=eq.${CU.id}&order=at.desc`);
+    const filtered=list.filter(a=>['interest_match','selected','queue','given_away','new_request'].includes(a.type));
+    if(!filtered.length){el.innerHTML=emptyHTML('🔔','No Alerts Yet','Save shift interests and get notified when matches appear.');return;}
+    const shifts=await dbGet('shifts','');
+    el.innerHTML=`<div class="alert-panel">`+filtered.map(a=>{
+      const shift=shifts.find(s=>s.id===a.shift_id);
+      const icon={interest_match:'🎯',selected:'📞',queue:'⏳',given_away:'🔒',new_request:'💪'}[a.type]||'🔔';
+      let action='';
+      if(a.type==='interest_match'&&shift&&shift.status==='open') action=`<button class="cbtn primary" style="flex:none;padding:7px 12px;font-size:11px;margin-top:7px;display:inline-block" onclick="openICanDo('${shift.id}')">💪 I Can Do It</button>`;
+      if(a.type==='new_request'&&shift&&shift.status==='open') action=`<button class="cbtn orange" style="flex:none;padding:7px 12px;font-size:11px;margin-top:7px;display:inline-block" onclick="openRequests('${shift.id}')">View Requests</button>`;
+      return `<div class="ai ${a.read?'':'unread'}">
+        <div class="ai-icon">${icon}</div>
+        <div class="ai-body">
+          <div class="ai-title">${a.title}</div>
+          <div class="ai-text">${a.body}</div>
+          ${action}
+          <div class="ai-time">${ago(a.at)}</div>
+        </div>
+      </div>`;
+    }).join('')+`</div>`;
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load alerts.');}
+}
+
+async function markAlertsRead(){
+  try{await dbPatch('alerts',`?user_id=eq.${CU.id}&read=eq.false`,{read:true});}catch(e){}
+}
+
+async function updateDot(){
+  try{
+    const list=await dbGet('alerts',`?user_id=eq.${CU.id}&read=eq.false`);
+    const unread=list.filter(a=>['interest_match','selected','queue','given_away','new_request'].includes(a.type)).length;
+    g('bdot').classList.toggle('on',unread>0);
+  }catch(e){}
+}
+
+// ══ ADMIN ════════════════════════════════════════════════════════════════════
+function verifyAdmin(){
+  const pass=v('admin-pass-input'),err=g('admin-err');
+  err.style.display='none';
+  if(pass!==ADMIN_PASS){showErr(err,'Incorrect password.');return;}
+  adminAuthed=true;
+  g('admin-gate-wrap').style.display='none';
+  g('admin-panel-wrap').style.display='block';
+  renderAdminStats();renderAdminUsers();
+}
+
+function logoutAdmin(){
+  adminAuthed=false;
+  g('admin-gate-wrap').style.display='block';
+  g('admin-panel-wrap').style.display='none';
+  g('admin-pass-input').value='';
+}
+
+function switchAdminTab(tab){
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  g('at-'+tab).classList.add('active');
+  g('as-'+tab).classList.add('active');
+  if(tab==='users') renderAdminUsers();
+  if(tab==='shifts') renderAdminShifts();
+  if(tab==='requests') renderAdminRequests();
+  if(tab==='groups') renderAdminGroups();
+}
+
+async function renderAdminStats(){
+  try{
+    const [users,shifts,reqs,groups]=await Promise.all([
+      dbGet('users',''),dbGet('shifts',''),dbGet('requests',''),dbGet('job_groups','')
+    ]);
+    const blocked=users.filter(u=>u.blocked).length;
+    const openShifts=shifts.filter(s=>s.status==='open').length;
+    const givenAway=shifts.filter(s=>s.status==='given_away').length;
+    const activeReqs=reqs.filter(r=>r.status!=='withdrawn').length;
+    g('admin-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-num blue">${users.length}</div><div class="stat-label">Total Users</div></div>
+      <div class="stat-card"><div class="stat-num red">${blocked}</div><div class="stat-label">Blocked</div></div>
+      <div class="stat-card"><div class="stat-num orange">${openShifts}</div><div class="stat-label">Open Shifts</div></div>
+      <div class="stat-card"><div class="stat-num green">${givenAway}</div><div class="stat-label">Given Away</div></div>
+      <div class="stat-card"><div class="stat-num blue">${activeReqs}</div><div class="stat-label">Active Requests</div></div>
+      <div class="stat-card"><div class="stat-num orange">${groups.length}</div><div class="stat-label">Job Groups</div></div>`;
+  }catch(e){}
+}
+
+async function renderAdminUsers(){
+  const el=g('admin-users-list');
+  try{
+    const users=await dbGet('users',`?order=created_at.desc`);
+    if(!users.length){el.innerHTML=emptyHTML('👥','No Users Yet','No one has registered yet.');return;}
+    el.innerHTML=users.map(u=>{
+      const isBlocked=u.blocked||false;
+      return `<div class="user-row ${isBlocked?'blocked':''}">
+        <div class="ur-av ${isBlocked?'blocked-av':''}">${u.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
+        <div class="ur-info">
+          <div class="ur-name">${u.name} ${isBlocked?'<span class="badge cancelled">Blocked</span>':''}</div>
+          <div class="ur-detail">📞 ${u.phone} · 🔒 ${u.job_group||'SO'}</div>
+        </div>
+        <div class="ur-actions">
+          <button class="ur-btn reset" onclick="adminResetPassword('${u.id}')">Reset PW</button>
+          ${isBlocked
+            ?`<button class="ur-btn unblock" onclick="adminToggleBlock('${u.id}',false)">Unblock</button>`
+            :`<button class="ur-btn block" onclick="adminToggleBlock('${u.id}',true)">Block</button>`}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load users.');}
+}
+
+async function adminToggleBlock(userId,block){
+  loading(true);
+  try{
+    await dbPatch('users',`?id=eq.${userId}`,{blocked:block});
+    renderAdminUsers();renderAdminStats();
+    toast(block?'🔒 User blocked.':'✅ User unblocked.');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function adminResetPassword(userId){
+  loading(true);
+  try{
+    await dbPatch('users',`?id=eq.${userId}`,{pass:'shifter123'});
+    toast('🔑 Password reset to: shifter123');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function renderAdminShifts(){
+  const el=g('admin-shifts-list');
+  try{
+    const shifts=await dbGet('shifts',`?order=posted_at.desc`);
+    if(!shifts.length){el.innerHTML=emptyHTML('📋','No Shifts Yet','No shifts posted yet.');return;}
+    el.innerHTML=shifts.map(s=>`<div class="admin-shift-row">
+      <div class="asr-top">
+        <div>
+          <div class="asr-name">${s.giver_name} <span class="badge ${s.status==='open'?'open':'done'}">${s.status==='open'?'Open':'Given Away'}</span></div>
+          <div class="asr-detail">📅 ${fd(s.date)} · 📍 ${s.checkpoint} · 🕐 ${f24(s.start_time)}–${f24(s.end_time)}</div>
+          <div class="asr-detail">Posted ${ago(s.posted_at)}</div>
+        </div>
+      </div>
+      ${s.note?`<div style="font-size:11px;color:var(--text2);margin-bottom:6px">💬 ${s.note}</div>`:''}
+      <div class="asr-actions"><button class="cbtn red" style="flex:none;font-size:11px;padding:7px 12px" onclick="adminDeleteShift('${s.id}')">Delete</button></div>
+    </div>`).join('');
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load shifts.');}
+}
+
+async function adminDeleteShift(id){
+  loading(true);
+  try{
+    await dbDelete('shifts',`?id=eq.${id}`);
+    await dbDelete('requests',`?shift_id=eq.${id}`);
+    renderAdminShifts();renderAdminStats();
+    toast('🗑️ Shift deleted.');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function renderAdminRequests(){
+  const el=g('admin-requests-list');
+  try{
+    const reqs=await dbGet('requests',`?order=created_at.desc`);
+    const shifts=await dbGet('shifts','');
+    if(!reqs.length){el.innerHTML=emptyHTML('🤝','No Requests Yet','No pickup requests yet.');return;}
+    el.innerHTML=reqs.map(r=>{
+      const shift=shifts.find(s=>s.id===r.shift_id);
+      const statusMap={pending:'pending',contacting:'contacting',queue:'queue',withdrawn:'cancelled'};
+      return `<div class="admin-shift-row">
+        <div class="asr-name">${r.picker_name} <span class="badge ${statusMap[r.status]||'pending'}">${r.status}</span></div>
+        <div class="asr-detail">📞 ${r.picker_phone}</div>
+        ${shift?`<div class="asr-detail">➡️ ${shift.checkpoint} on ${fd(shift.date)} (${shift.giver_name})</div>`:'<div class="asr-detail" style="color:var(--red)">⚠️ Shift deleted</div>'}
+        <div class="asr-detail">${ago(r.created_at)}</div>
+        <div class="asr-actions"><button class="cbtn red" style="flex:none;font-size:11px;padding:7px 12px" onclick="adminDeleteRequest('${r.id}')">Remove</button></div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=emptyHTML('⚠️','Error','Could not load requests.');}
+}
+
+async function adminDeleteRequest(id){
+  loading(true);
+  try{await dbDelete('requests',`?id=eq.${id}`);renderAdminRequests();renderAdminStats();toast('🗑️ Request removed.');}
+  catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function renderAdminGroups(){
+  const el=g('admin-groups-list');
+  try{
+    const groups=await dbGet('job_groups','');
+    const users=await dbGet('users','');
+    el.innerHTML=groups.map(jg=>{
+      const count=users.filter(u=>(u.job_group||'SO')===jg.code).length;
+      return `<div class="job-group-row">
+        <div><div class="jgr-name">${jg.code} — ${jg.name}</div><div class="jgr-count">👥 ${count} user${count!==1?'s':''}</div></div>
+        <div>${jg.code==='SO'?`<span class="badge open">Default</span>`:`<button class="ur-btn block" onclick="adminDeleteGroup('${jg.code}')">Remove</button>`}</div>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function addJobGroup(){
+  const code=v('new-group-code').toUpperCase(),name=v('new-group-name');
+  if(!code||!name){toast('⚠️ Enter both code and name.');return;}
+  loading(true);
+  try{
+    await dbPost('job_groups',{code,name});
+    sv('new-group-code','');sv('new-group-name','');
+    renderAdminGroups();renderAdminStats();
+    // Update register dropdown
+    const groups=await dbGet('job_groups','');
+    g('rj').innerHTML=groups.map(jg=>`<option value="${jg.code}">${jg.code} — ${jg.name}</option>`).join('');
+    toast(`✅ Job group ${code} added!`);
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+async function adminDeleteGroup(code){
+  if(code==='SO'){toast('Cannot remove default S.O group.');return;}
+  loading(true);
+  try{
+    await dbDelete('job_groups',`?code=eq.${code}`);
+    renderAdminGroups();renderAdminStats();
+    toast('🗑️ Group removed.');
+  }catch(e){toast('Error: '+e.message);}
+  loading(false);
+}
+
+// ── PWA ───────────────────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
